@@ -45,7 +45,7 @@ done
 
 rev=${1:-HEAD}
 if [ -z "$version" ]; then
-    version=$(git describe --abbrev=8 "--match=[0-9]*" ${long_opt} $rev)
+    version=$(git describe --abbrev=8 "--match=[0-9]*" --always ${long_opt} $rev)
 elif [ ! -z "$long_opt" ]; then
     echo "WARNING: --long has no effect when --version is passed" >&2
     exit 1
