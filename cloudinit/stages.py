@@ -1020,9 +1020,15 @@ class Init:
                 LOG.debug("network config disabled by %s", cfg_source)
                 return (None, cfg_source)
             if ncfg:
+                LOG.debug("network config found in %s", cfg_source)
                 return (ncfg, cfg_source)
         if not self.cfg.get("network", True):
             LOG.warning("Empty network config found")
+
+        if self._extract_cfg("system").get("disable_fallback_netcfg", False):
+            LOG.warning("Providing fallback network config is disabled")
+            return (None, NetworkConfigSource.SYSTEM_CFG)
+
         return (
             self.distro.generate_fallback_config(),
             NetworkConfigSource.FALLBACK,
