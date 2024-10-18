@@ -195,7 +195,7 @@ fi
 %config(noreplace)      %{_sysconfdir}/cloud/cloud.cfg.d/README
 %dir                    %{_sysconfdir}/cloud/templates
 %config(noreplace)      %{_sysconfdir}/cloud/templates/*
-%config(noreplace) %{_sysconfdir}/rsyslog.d/21-cloudinit.conf
+%config(noreplace)      %{_sysconfdir}/rsyslog.d/21-cloudinit.conf
 
 # Bash completion script
 %{_datadir}/bash-completion/completions/cloud-init
