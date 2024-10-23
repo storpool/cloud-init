@@ -128,7 +128,7 @@
               "type": "string"
             },
             "bond-arp_validate": {
-              "type": "boolean"
+              "type": "string"
             },
             "bond-downdelay": {
               "type": "integer",
