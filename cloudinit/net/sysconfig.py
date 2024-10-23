@@ -345,21 +345,21 @@ class Renderer(renderer.Renderer):
     # grouping will be set.
     bond_tpl_opts = tuple(
         [
-            ("bond_mode", "mode=%s"),
-            ("bond_xmit_hash_policy", "xmit_hash_policy=%s"),
-            ("bond_miimon", "miimon=%s"),
-            ("bond_min_links", "min_links=%s"),
-            ("bond_arp_interval", "arp_interval=%s"),
-            ("bond_arp_ip_target", "arp_ip_target=%s"),
-            ("bond_arp_validate", "arp_validate=%s"),
-            ("bond_ad_select", "ad_select=%s"),
-            ("bond_num_grat_arp", "num_grat_arp=%s"),
-            ("bond_downdelay", "downdelay=%s"),
-            ("bond_updelay", "updelay=%s"),
-            ("bond_lacp_rate", "lacp_rate=%s"),
-            ("bond_fail_over_mac", "fail_over_mac=%s"),
-            ("bond_primary", "primary=%s"),
-            ("bond_primary_reselect", "primary_reselect=%s"),
+            ("bond-mode", "mode=%s"),
+            ("bond-xmit_hash_policy", "xmit_hash_policy=%s"),
+            ("bond-miimon", "miimon=%s"),
+            ("bond-min_links", "min_links=%s"),
+            ("bond-arp_interval", "arp_interval=%s"),
+            ("bond-arp_ip_target", "arp_ip_target=%s"),
+            ("bond-arp_validate", "arp_validate=%s"),
+            ("bond-ad_select", "ad_select=%s"),
+            ("bond-num_grat_arp", "num_grat_arp=%s"),
+            ("bond-downdelay", "downdelay=%s"),
+            ("bond-updelay", "updelay=%s"),
+            ("bond-lacp_rate", "lacp_rate=%s"),
+            ("bond-fail_over_mac", "fail_over_mac=%s"),
+            ("bond-primary", "primary=%s"),
+            ("bond-primary_reselect", "primary_reselect=%s"),
         ]
     )
 
@@ -691,15 +691,11 @@ class Renderer(renderer.Renderer):
     def _render_bonding_opts(cls, iface_cfg, iface, flavor):
         bond_opts = []
         for bond_key, value_tpl in cls.bond_tpl_opts:
-            # Seems like either dash or underscore is possible?
-            bond_keys = [bond_key, bond_key.replace("_", "-")]
-            for bond_key in bond_keys:
-                if bond_key in iface:
-                    bond_value = iface[bond_key]
-                    if isinstance(bond_value, (tuple, list)):
-                        bond_value = " ".join(bond_value)
-                    bond_opts.append(value_tpl % (bond_value))
-                    break
+            if bond_key in iface:
+                bond_value = iface[bond_key]
+                if isinstance(bond_value, (tuple, list)):
+                    bond_value = " ".join(bond_value)
+                bond_opts.append(value_tpl % (bond_value))
         if bond_opts:
             if flavor == "suse":
                 # suse uses the sysconfig support which requires
