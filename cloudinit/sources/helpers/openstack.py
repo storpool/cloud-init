@@ -764,7 +764,7 @@ def convert_net_json(network_json=None, known_macs=None):
 
             curinfo["name"] = link_name
         elif link["type"] in ["vlan"]:
-            name = "%s.%s" % (link["vlan_link"], link["vlan_id"])
+            name = link.get("name", "%s.%s" % (link["vlan_link"], link["vlan_id"]))
             cfg.update(
                 {
                     "name": name,
@@ -773,9 +773,10 @@ def convert_net_json(network_json=None, known_macs=None):
                 }
             )
             link_updates.append((cfg, "vlan_link", "%s", link["vlan_link"]))
-            link_updates.append(
-                (cfg, "name", "%%s.%s" % link["vlan_id"], link["vlan_link"])
-            )
+            if "name" not in link:
+                link_updates.append(
+                    (cfg, "name", "%%s.%s" % link["vlan_id"], link["vlan_link"])
+                )
             curinfo.update({"mac": link["vlan_mac_address"], "name": name})
         else:
             if link["type"] not in KNOWN_PHYSICAL_TYPES:
