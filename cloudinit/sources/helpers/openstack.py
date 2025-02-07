@@ -77,6 +77,13 @@ KNOWN_PHYSICAL_TYPES = (
     "vif",
 )
 
+LINK_PRIORITY = [
+    "phy",
+    "bond",
+    "vlan",
+    "bridge"
+]
+
 
 class NonReadable(IOError):
     pass
@@ -591,7 +598,7 @@ def convert_net_json(network_json=None, known_macs=None):
     bond_name_fmt = "bond%d"
     bond_number = 0
     config = []
-    for link in links:
+    for link in sorted(links, key=lambda link_info: LINK_PRIORITY.index(link_info["type"])):
         subnets = []
         cfg = dict(
             (k, v) for k, v in link.items() if k in valid_keys["physical"]
@@ -809,13 +816,18 @@ def convert_net_json(network_json=None, known_macs=None):
                     raise ValueError("Unable to find a system nic for %s" % d)
             d["name"] = known_macs[mac]
 
-        for cfg, key, fmt, targets in link_updates:
+        for cfg, key, fmt, targets in sorted(link_updates, key=lambda link_update: LINK_PRIORITY.index(link_update[0]["type"])):
+            old_value = cfg.get(key, None)
             if isinstance(targets, (list, tuple)):
                 cfg[key] = [
                     fmt % link_id_info[target]["name"] for target in targets
                 ]
             else:
                 cfg[key] = fmt % link_id_info[targets]["name"]
+            if key == "name":
+                for info in link_id_info.values():
+                    if info["name"] == old_value:
+                        info["name"] = cfg[key]
 
     # Infiniband interfaces may be referenced in network_data.json by a 6 byte
     # Ethernet MAC-style address, and we use that address to look up the
