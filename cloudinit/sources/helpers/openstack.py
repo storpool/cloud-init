@@ -689,7 +689,37 @@ def convert_net_json(network_json=None, known_macs=None):
                 subnet["ipv6"] = True
             subnets.append(subnet)
         cfg.update({"subnets": subnets})
-        if link["type"] in ["bond"]:
+        if link["type"] in ["bridge"]:
+            params = {}
+
+            for k, v in link.items():
+                if k == "bridge_members":
+                    continue
+                elif k.startswith("bridge_members"):
+                    # There is a difference in key name formatting for
+                    # bond parameters in the cloudinit and OpenStack
+                    # network schemas. The keys begin with 'bond-' in the
+                    # cloudinit schema but 'bond_' in OpenStack
+                    # network_data.json schema. Translate them to what
+                    # is expected by cloudinit.
+                    translated_key = "bridge-{}".format(k.split("bridge_", 1)[-1])
+                    params.update({translated_key: v})
+
+            if link_mac_addr:
+                params.update({"bridge_hw": link_mac_addr})
+
+            link_updates.append(
+                (
+                    cfg,
+                    "bridge_interfaces",
+                    "%s",
+                    copy.deepcopy(link["bridge_members"]),
+                )
+            )
+
+            cfg.update({"params": params})
+            cfg.pop("mtu", None)
+        elif link["type"] in ["bond"]:
             params = {}
             if link_mac_addr:
                 cfg.update({"mac_address": link_mac_addr})
