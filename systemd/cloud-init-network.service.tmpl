@@ -34,12 +34,7 @@ Before=avahi-daemon.service
 Before=sshd-keygen.service
 Before=sshd.service
 Before=systemd-user-sessions.service
-{% if variant in ["ubuntu", "unknown", "debian"] %}
-Before=sysinit.target
-Before=shutdown.target
-Conflicts=shutdown.target
-{% endif %}
-{% if variant in ["suse"] %}
+{% if variant in ["ubuntu", "unknown", "debian", "suse"] %}
 Before=shutdown.target
 Conflicts=shutdown.target
 {% endif %}

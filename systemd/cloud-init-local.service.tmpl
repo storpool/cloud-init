@@ -13,9 +13,6 @@ Before=shutdown.target
 {% if variant in ["almalinux", "cloudlinux", "rhel"] %}
 Before=firewalld.target
 {% endif %}
-{% if variant in ["ubuntu", "unknown", "debian", "raspberry-pi-os"] %}
-Before=sysinit.target
-{% endif %}
 Conflicts=shutdown.target
 ConditionPathExists=!/etc/cloud/cloud-init.disabled
 ConditionKernelCommandLine=!cloud-init=disabled
